@@ -9,8 +9,10 @@ def parse():
 
     if not resume_file:
         return jsonify({'error':'No resume uploaded'}),400
+    else:
+        print("Uploaded Your file :",resume_file.filename)
      
-    result=parse_resume(resume_file)
-    return jsonify(result )
+    result_of_parsed_resume=parse_resume(resume_file)
+    return jsonify(result_of_parsed_resume)
 
 

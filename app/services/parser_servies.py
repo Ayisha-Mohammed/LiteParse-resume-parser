@@ -11,9 +11,9 @@ def extracted_text_from_pdf(resume_file):
    return text
 
 def extracted_text_from_docx(resume_file):
-   
-   return
-   
+    doc = docx.Document(resume_file)
+    text = "\n".join([para.text for para in doc.paragraphs])
+    return text
 
 def parse_resume(resume_file:FileStorage):
     file_name= resume_file.filename.lower()

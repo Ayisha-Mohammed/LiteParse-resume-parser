@@ -2,20 +2,10 @@ import re
 import fitz
 import docx
 from werkzeug.datastructures import FileStorage
+from utils.ext_text import extracted_text_from_pdf,extracted_text_from_docx
+from utils.ext_data import extract_email,extract_phone
+import jsonify
 
-def extracted_text_from_pdf(resume_file):
-   text=""
-   with fitz.open(stream=resume_file.read(),filetype="pdf")as doc :
-    for page in doc:
-       text += page.get_text()
-   return text
-
-def extracted_text_from_docx(resume_file):
-    doc = docx.Document(resume_file)
-    text = ""
-    for para in doc.paragraph:
-       text+=para.text+"/n"
-    return text
 
 def parse_resume(resume_file:FileStorage):
     file_name= resume_file.filename.lower()
@@ -26,6 +16,14 @@ def parse_resume(resume_file:FileStorage):
     else:
       return{"error":"Unsupported file format"}
     
-    return {"raw text:",text}
+    email=extract_email(text) 
+    phone=extract_phone(text)
+   
+    return {
+      "Email":email,"phone":phone
+    }
+   
+   
 
+       
     

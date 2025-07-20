@@ -4,7 +4,7 @@ import docx
 from werkzeug.datastructures import FileStorage
 
 def extracted_text_from_pdf(resume_file):
-   text=''
+   text=""
    with fitz.open(stream=resume_file.read(),filetype="pdf")as doc :
     for page in doc:
        text += page.get_text()
@@ -12,7 +12,9 @@ def extracted_text_from_pdf(resume_file):
 
 def extracted_text_from_docx(resume_file):
     doc = docx.Document(resume_file)
-    text = "\n".join([para.text for para in doc.paragraphs])
+    text = ""
+    for para in doc.paragraph:
+       text+=para.text+"/n"
     return text
 
 def parse_resume(resume_file:FileStorage):

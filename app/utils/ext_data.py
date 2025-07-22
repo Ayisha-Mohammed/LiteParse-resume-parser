@@ -25,11 +25,6 @@ def extract_name(text):
       return None
    
 def extract_skills(text,Skills):
-  
-    """
-    Extract skills from resume text using PhraseMatcher.
-    Returns a list of matched skills found in the resume.
-    """
     matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
     patterns = [nlp.make_doc(skill) for skill in Skills]
     matcher.add("SKILLS", patterns)

@@ -1,5 +1,6 @@
 import spacy
 import re
+from spacy.matcher import PhraseMatcher
 
 def extract_email(text):
     pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
@@ -23,5 +24,19 @@ def extract_name(text):
        return ent.text
       return None
    
-def extract_skills(Skills):
-   return 
+def extract_skills(text,Skills):
+  
+    """
+    Extract skills from resume text using PhraseMatcher.
+    Returns a list of matched skills found in the resume.
+    """
+    matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+    patterns = [nlp.make_doc(skill) for skill in Skills]
+    matcher.add("SKILLS", patterns)
+
+    doc = nlp(text)
+    matches = matcher(doc)
+
+    found_skills = {doc[start:end].text for _, start, end in matches}
+    return list(found_skills)
+ 

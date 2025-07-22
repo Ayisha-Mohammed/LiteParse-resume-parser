@@ -14,12 +14,12 @@ def parse_resume(resume_file:FileStorage):
        text = extracted_text_from_docx(resume_file)
     else:
       return{"error":"Unsupported file format"}
-    Skills = load_sklist("")
+    Skills = load_sklist('skill_list.txt')
    
     email=extract_email(text) 
     phone=extract_phone(text)
     name=extract_name(text)
-    skills=extract_skills(Skills)
+    skills=extract_skills(text,Skills)
    
     return {
       "Email":email,"phone":phone, "Name":name ,"Skills":skills}

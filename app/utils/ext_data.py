@@ -23,5 +23,5 @@ def extract_name(text):
        return ent.text
       return None
    
-def extract_skills(text):
+def extract_skills(Skills):
    return 

@@ -1,6 +1,6 @@
 
 from werkzeug.datastructures import FileStorage
-from app.utils.ext_text import extracted_text_from_pdf,extracted_text_from_docx,load_sklist()
+from app.utils.ext_text import extracted_text_from_pdf,extracted_text_from_docx,load_sklist
 from app.utils.ext_data import extract_email,extract_phone,extract_name,extract_skills
 
 
@@ -14,12 +14,12 @@ def parse_resume(resume_file:FileStorage):
        text = extracted_text_from_docx(resume_file)
     else:
       return{"error":"Unsupported file format"}
-    load_skfile = load_sklist("skill_lst")
+    Skills = load_sklist("skill_lst")
    
     email=extract_email(text) 
     phone=extract_phone(text)
     name=extract_name(text)
-    skills=extract_skills(load_skfile)
+    skills=extract_skills(Skills)
    
     return {
       "Email":email,"phone":phone, "Name":name ,"Skills":skills}

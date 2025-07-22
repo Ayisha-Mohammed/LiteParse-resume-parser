@@ -16,7 +16,8 @@ def extracted_text_from_docx(resume_file):
        text+=para.text+"/n"
     return text
 
-def load_sklist():
+def load_sklist(filepath):
+   with open(filepath, 'r' , encoding='utf-8') as f:
+      return[line.strip() for line in f if line.strip()]
    
-   return
  

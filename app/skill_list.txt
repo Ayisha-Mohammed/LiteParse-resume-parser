@@ -1,0 +1,28 @@
+Python
+Html
+Css
+SQL
+Excel
+Tableau
+Power BI
+Pandas
+NumPy
+Scikit-learn
+TensorFlow
+Data Visualization
+Data Analysis
+Data Cleaning
+Google Cloud Platform
+Amazon Web Services
+Microsoft Azure
+BigQuery
+ETL
+Machine Learning
+Deep Learning
+Statistics
+Php
+Java
+Mysql
+Nosql
+Mongodb
+

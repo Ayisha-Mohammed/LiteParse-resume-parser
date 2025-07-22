@@ -15,3 +15,8 @@ def extracted_text_from_docx(resume_file):
     for para in doc.paragraph:
        text+=para.text+"/n"
     return text
+
+def load_sklist():
+   
+   return
+ 

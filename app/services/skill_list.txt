@@ -1,4 +1,9 @@
 Python
+Django
+Docker
+AWS
+Javascript
+React
 Html
 Css
 SQL

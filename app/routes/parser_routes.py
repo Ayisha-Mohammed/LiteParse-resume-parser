@@ -1,6 +1,7 @@
 from flask import Blueprint , request, jsonify
 from app.services.res_parser import parse_resume
 
+
 parser_bp = Blueprint('parser', __name__)
 
 
@@ -14,5 +15,4 @@ def parse():
      
     result_of_parsed_resume=parse_resume(resume_file)
     return jsonify(result_of_parsed_resume)
-
-
+   

@@ -14,9 +14,10 @@ def parse_resume(resume_file:FileStorage):
        text = extracted_text_from_docx(resume_file)
     else:
       return{"error":"Unsupported file format"}
-    CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-    skills_file = os.path.join(CURRENT_DIR, "skill_list.txt")
-    Skills = load_sklist(skills_file)
+    
+    skills_path = os.path.join(os.path.dirname(__file__), "skill_list.txt")
+    with open(skills_path, 'r' , encoding='utf-8') as f:
+     Skills=[line.strip() for line in f if line.strip()]
    
     email=extract_email(text) 
     phone=extract_phone(text)

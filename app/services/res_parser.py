@@ -24,7 +24,7 @@ def parse_resume(resume_file:FileStorage):
     skills=extract_skills(text,Skills)
    
     return {
-      "Email":email,"phone":phone, "Name":name ,"Skills":skills}
+      "Email":email,"phone":phone, "Name":name ,"Skills":",".join(skills)}
    
    
 

@@ -52,20 +52,19 @@ def extract_skills(text,Skills):
 
 def extract_education(text):
  education =[]
- deg_pattn = re.compile(r'()',re.IGNORECASE)
- year_pattn = re.compile(r'()',re.IGNORECASE)
-
+ deg_pattn = re.compile(r'\b(B\.?\s?(A|Sc|Com|Eng|Tech)|M\.?\s?(A|Sc|Com|Eng|Tech)|MBA|MCA|BCA|BBA|BE|ME|B\.?Tech|M\.?Tech|Ph\.?D|PhD|PGDM|Diploma|Certificate|Certification|Associate)\b'
+ ,re.IGNORECASE)
+ year_pattn = re.compile(r'(19|20)\d{2}[\s\-–]*(19|20)?\d{2}?'
+ ,re.IGNORECASE)
  for line in text.spit():
     if deg_pattn.search(line):
        match_deg = deg_pattn.search(line)
        match_year=year_pattn.search(line)
-
     if match_deg:
        education.append({
           "degree": match_deg .group(),
           "year": match_year if match_year else None
        })
-
  return education
 
 

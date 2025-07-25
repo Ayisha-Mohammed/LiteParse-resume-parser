@@ -3,6 +3,9 @@ import re
 from spacy.matcher import PhraseMatcher
 from transformers import pipeline
 
+nlp=spacy.load("en_core_web_sm")
+summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-6-6", device=-1) 
+
 def extract_email(text):
     pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
     match = re.search(pattern, text)
@@ -15,8 +18,6 @@ def extract_phone(text):
       return match.group()
     else:
        None
-
-nlp=spacy.load("en_core_web_sm")
 
 def extract_name(text):
    doc =nlp(text)
@@ -34,7 +35,6 @@ def extract_skills(text,Skills):
     found_skills = {doc[start:end].text for _, start, end in matches}
     return list(found_skills)
 
-summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
 def extract_summary(text):
     keyword_re = re.compile(r'\b(experience|project|developed|built|created)\b', re.IGNORECASE)
     lines = text.splitlines()

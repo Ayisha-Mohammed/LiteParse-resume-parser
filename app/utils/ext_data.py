@@ -191,7 +191,45 @@ def extract_edu_section(text):
             capture=False
         elif capture:
             exp_sec_lines.append(lines.strip())  
-    return exp_sec_lines         
+    return
+
+
+def extract_experience(exp_sec_lines):
+    experience_items = []
+
+    # Regex pattern for common date ranges like: Jan 2022 – May 2023
+    date_range_pattern = re.compile(r'([A-Z][a-z]{2,8})\s+\d{4}\s*[–\-to]+\s*([A-Z][a-z]{2,8})?\s*\d{4}|present', re.IGNORECASE)
+
+    for i, line in enumerate(exp_sec_lines):
+        clean_line = line.strip()
+
+        # Try to find a date range at the end of the line
+        match = date_range_pattern.search(clean_line)
+        if match:
+            # Get position where date starts
+            start = match.start()
+
+            # Split into left and right
+            left_part = clean_line[:start].strip()
+            right_part = clean_line[start:].strip()
+
+            # Optionally, get description from next 1–2 lines
+            description = ""
+            if i + 1 < len(exp_sec_lines):
+                desc_line =exp_sec_lines=[i + 1].strip()
+                if desc_line and not date_range_pattern.search(desc_line.lower()):
+                    description = desc_line
+
+            # Store item as dictionary
+            experience_items.append({
+                "role_company": left_part,
+                "duration": right_part,
+                "description": description
+            })
+
+    return experience_items
+     
+   
           
 
 

@@ -191,16 +191,16 @@ def extract_edu_section(text):
             capture=False
         elif capture:
             exp_sec_lines.append(lines.strip())  
-    return
+    return exp_sec_lines
 
 
-def extract_experience(exp_sec_lines):
+def extract_experience(exp_detection):
     experience_items = []
 
     # Regex pattern for common date ranges like: Jan 2022 – May 2023
     date_range_pattern = re.compile(r'([A-Z][a-z]{2,8})\s+\d{4}\s*[–\-to]+\s*([A-Z][a-z]{2,8})?\s*\d{4}|present', re.IGNORECASE)
 
-    for i, line in enumerate(exp_sec_lines):
+    for i, line in enumerate(exp_detection):
         clean_line = line.strip()
 
         # Try to find a date range at the end of the line

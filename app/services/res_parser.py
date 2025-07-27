@@ -1,7 +1,7 @@
 
 from werkzeug.datastructures import FileStorage
 from app.utils.ext_text import extracted_text_from_pdf,extracted_text_from_docx
-from app.utils.ext_data import extract_email,extract_phone,extract_name,extract_skills,extract_education,extract_latest_degree_and_year,extract_experience,extract_edu_section
+from app.utils.ext_data import extract_email,extract_phone,extract_name,extract_skills,extract_education,extract_latest_degree_and_year,extract_projects
 # ,extract_summary
 import os
 
@@ -26,14 +26,13 @@ def parse_resume(resume_file:FileStorage):
     skills=extract_skills(text,Skills)
     education=extract_education(text)
     latest_deg=extract_latest_degree_and_year(text)
-    exp_detection=extract_edu_section(text)
-    experience=extract_experience(exp_detection)
-
+    projects=extract_projects(text)
+    
    #  summary=extract_summary(text)
     
     return {
       "Email":email,"phone":phone, "Name":name ,"Skills":",".join(skills),"Education":education,"Latest degree":latest_deg,
-       "Experience":experience}
+      "Projects":projects}
    
    
 

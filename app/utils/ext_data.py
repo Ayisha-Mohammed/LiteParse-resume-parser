@@ -19,12 +19,6 @@ def extract_phone(text):
     else:
        None
 
-# def extract_name(text):
-#    doc =nlp(text)~
-#    for ent in doc.ents:
-#       if ent.label_== "PERSON":
-#        return ent.text
-#    return None
 def extract_name(resume_text):
     lines = [line.strip() for line in resume_text.split('\n') if line.strip()]
     lines = [line for line in lines if not re.fullmatch(r'[-=_~*\s]{3,}', line)]
@@ -178,57 +172,35 @@ def extract_latest_degree_and_year(text):
     }
 
 
-def extract_edu_section(text):
-    exp_sec_lines =[]
-    lines=text.split("\n")
-    capture= False
-    for l in lines:
-        lower=lines.strip().lower()
-        if "experince" in  lower:
+def extract_projects(text):
+    lines = text.split('\n')
+    titles = []
+    capture = False
+
+    project_keywords = ['project', 'projects', 'academic project', 'major project', 'minor project', 'report']
+    other_sections = ['education', 'skills', 'certification', 'experience', 'internship', 'contact', 'summary', 'profile', 'personal']
+
+    for line in lines:
+        clean = line.strip()
+        lower = clean.lower()
+
+        # Step 1: Start capturing
+        if not capture and any(kw in lower for kw in project_keywords):
             capture = True
             continue
-        elif any(keyword in lower for keyword in ["education","projects","certifications","skills"]):
-            capture=False
-        elif capture:
-            exp_sec_lines.append(lines.strip())  
-    return exp_sec_lines
+
+        # Step 2: Stop at another section
+        if capture and any(kw in lower for kw in other_sections):
+            break
+
+        # Step 3: Only get clean, likely title lines (non-bullets, not too long, not too short)
+        if capture and clean and not clean.startswith(('▪', '-', '*')) and 3 <= len(clean.split()) <= 10:
+            titles.append(clean)
+
+    return titles
 
 
-def extract_experience(exp_detection):
-    experience_items = []
 
-    # Regex pattern for common date ranges like: Jan 2022 – May 2023
-    date_range_pattern = re.compile(r'([A-Z][a-z]{2,8})\s+\d{4}\s*[–\-to]+\s*([A-Z][a-z]{2,8})?\s*\d{4}|present', re.IGNORECASE)
-
-    for i, line in enumerate(exp_detection):
-        clean_line = line.strip()
-
-        # Try to find a date range at the end of the line
-        match = date_range_pattern.search(clean_line)
-        if match:
-            # Get position where date starts
-            start = match.start()
-
-            # Split into left and right
-            left_part = clean_line[:start].strip()
-            right_part = clean_line[start:].strip()
-
-            # Optionally, get description from next 1–2 lines
-            description = ""
-            if i + 1 < len(exp_sec_lines):
-                desc_line =exp_sec_lines=[i + 1].strip()
-                if desc_line and not date_range_pattern.search(desc_line.lower()):
-                    description = desc_line
-
-            # Store item as dictionary
-            experience_items.append({
-                "role_company": left_part,
-                "duration": right_part,
-                "description": description
-            })
-
-    return experience_items
-     
    
           
 
@@ -236,58 +208,58 @@ def extract_experience(exp_detection):
 
 
 # def extract_latest_degree_and_year(text):
-    degree_priority = {
-        'ph.d': 3, 'phd': 3, 'doctor of philosophy': 3,
-        'm.tech': 2, 'mtech': 2, 'master of technology': 2,
-        'm.sc': 2, 'msc': 2, 'master of science': 2,
-        'mba': 2, 'master of business administration': 2,
-        'mca': 2,
-        'b.tech': 1, 'btech': 1, 'bachelor of technology': 1,
-        'b.sc': 1, 'bsc': 1, 'bachelor of science': 1,
-        'bca': 1,
-        'bachelor of computer science': 1,
-    }
+    # degree_priority = {
+    #     'ph.d': 3, 'phd': 3, 'doctor of philosophy': 3,
+    #     'm.tech': 2, 'mtech': 2, 'master of technology': 2,
+    #     'm.sc': 2, 'msc': 2, 'master of science': 2,
+    #     'mba': 2, 'master of business administration': 2,
+    #     'mca': 2,
+    #     'b.tech': 1, 'btech': 1, 'bachelor of technology': 1,
+    #     'b.sc': 1, 'bsc': 1, 'bachelor of science': 1,
+    #     'bca': 1,
+    #     'bachelor of computer science': 1,
+    # }
 
-    # Smart year range regex
-    year_range_pattern = re.compile(r'(20\d{2}).*?(?:–|—|-|\sto\s).*?(20\d{2})', re.IGNORECASE)
-    single_year_pattern = re.compile(r'(20\d{2})')
+    # # Smart year range regex
+    # year_range_pattern = re.compile(r'(20\d{2}).*?(?:–|—|-|\sto\s).*?(20\d{2})', re.IGNORECASE)
+    # single_year_pattern = re.compile(r'(20\d{2})')
 
-    edu_lines = extract_education_section(text)
-    top_degree = ''
-    top_year_range = ''
-    top_rank = 0
+    # edu_lines = extract_education_section(text)
+    # top_degree = ''
+    # top_year_range = ''
+    # top_rank = 0
 
-    for i, line in enumerate(edu_lines):
-        line_clean = re.sub(r'\s{2,}', ' ', line.strip().lower())  # collapse extra spaces
+    # for i, line in enumerate(edu_lines):
+    #     line_clean = re.sub(r'\s{2,}', ' ', line.strip().lower())  # collapse extra spaces
 
-        for deg, rank in degree_priority.items():
-            if re.search(r'\b' + re.escape(deg) + r'\b', line_clean):
-                # Look for year range in same line
-                year_match = year_range_pattern.search(line_clean)
+    #     for deg, rank in degree_priority.items():
+    #         if re.search(r'\b' + re.escape(deg) + r'\b', line_clean):
+    #             # Look for year range in same line
+    #             year_match = year_range_pattern.search(line_clean)
 
-                # Check next line if not found
-                if not year_match and i + 1 < len(edu_lines):
-                    year_match = year_range_pattern.search(edu_lines[i + 1].lower())
+    #             # Check next line if not found
+    #             if not year_match and i + 1 < len(edu_lines):
+    #                 year_match = year_range_pattern.search(edu_lines[i + 1].lower())
 
-                if year_match:
-                    year_range = f"{year_match.group(1)}–{year_match.group(2)}"
-                else:
-                    # Try to find a single year as fallback
-                    single_year = single_year_pattern.search(line_clean)
-                    if not single_year and i + 1 < len(edu_lines):
-                        single_year = single_year_pattern.search(edu_lines[i + 1])
-                    year_range = single_year.group(1) if single_year else ''
+    #             if year_match:
+    #                 year_range = f"{year_match.group(1)}–{year_match.group(2)}"
+    #             else:
+    #                 # Try to find a single year as fallback
+    #                 single_year = single_year_pattern.search(line_clean)
+    #                 if not single_year and i + 1 < len(edu_lines):
+    #                     single_year = single_year_pattern.search(edu_lines[i + 1])
+    #                 year_range = single_year.group(1) if single_year else ''
 
-                # Update if this degree has higher priority
-                if rank > top_rank:
-                    top_rank = rank
-                    top_degree = deg.title()
-                    top_year_range = year_range
+    #             # Update if this degree has higher priority
+    #             if rank > top_rank:
+    #                 top_rank = rank
+    #                 top_degree = deg.title()
+    #                 top_year_range = year_range
 
-    return {
-        "degree": top_degree,
-        "year": top_year_range
-    }
+    # return {
+    #     "degree": top_degree,
+    #     "year": top_year_range
+    # }
 
 # def extract_latest_degree_and_year(text):
 #     degree_priority = {

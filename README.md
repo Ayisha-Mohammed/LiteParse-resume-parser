@@ -21,6 +21,3 @@ This project is built using Python and regex-based logic, designed for use in HR
 POST /parse
 Content-Type: application/json
 
-{
-  "resume_text": "Paste the entire resume text here..."
-}

@@ -17,6 +17,7 @@ This project is built using Python and regex-based logic, designed for use in HR
 
 ## API Endpoint
 ### `POST /parse`
+
 Accepts a resume file and returns extracted information in JSON format.
 
 #### Request
@@ -26,4 +27,8 @@ Accepts a resume file and returns extracted information in JSON format.
 - **Headers:** `Content-Type: multipart/form-data`
 - **Body:**  
   - `file`: Resume file in `.pdf` or `.docx` format
+ 
+curl -X POST http://localhost:5000/parse \
+  -F "file=@/path/to/resume.pdf"
+
 

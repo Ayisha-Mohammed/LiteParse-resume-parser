@@ -2,10 +2,12 @@ from flask import Flask
 from app.routes.parser_routes import parser_bp
 from .limiter import limiter
 import logging
+from flask_cors import CORS
 
 
 def create_app():
     app= Flask(__name__)
+    CORS(app)
     logging.basicConfig(level=logging.INFO)
     app.logger.setLevel(logging.INFO)
     limiter.init_app(app)

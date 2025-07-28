@@ -10,12 +10,16 @@ def extracted_text_from_pdf(resume_file):
    return text
 
 def extracted_text_from_docx(resume_file):
-    doc = docx.Document(resume_file)
-    text = ""
-    for para in doc.paragraph:
-       text+=para.text+"/n"
-    return text
-
+     try:
+        import docx
+        document = docx.Document(resume_file)
+        text = ""
+        for para in document.paragraphs:
+            text += para.text + "\n"
+        return text
+     except Exception as e:
+        print("DOCX parsing error:", e)  # This will show in your logs
+        return {"error": f"Failed to read DOCX: {str(e)}"}
 # def load_sklist(filepath):
 #    with open(filepath, 'r' , encoding='utf-8') as f:
 #       return[line.strip() for line in f if line.strip()]

@@ -15,9 +15,15 @@ This project is built using Python and regex-based logic, designed for use in HR
 - Flask 
 - JSON , NLP
 
-### Request
+## API Endpoint
+### `POST /parse`
+Accepts a resume file and returns extracted information in JSON format.
 
-```http
-POST /parse
-Content-Type: application/json
+#### Request
+
+- **Method:** `POST`
+- **URL:** `/parse`
+- **Headers:** `Content-Type: multipart/form-data`
+- **Body:**  
+  - `file`: Resume file in `.pdf` or `.docx` format
 

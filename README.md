@@ -3,11 +3,6 @@
 A lightweight API that extracts structured information from pdf /doc resume — iname, email, phone number, education, skills, and basic project details.
 This project is built using Python and regex-based logic, designed for use in HR tools, ATS systems, or resume-based applications.
 
-##Demo
-[Live on RapidAPI](https://your-rapidapi-link.com) *(replace with your actual URL once deployed)*  
-[GitHub Repository](https://github.com/yourusername/resume-parser-api)
-
-> Note: This API uses rule-based parsing (regex and keyword matching), so accuracy may vary depending on the formatting and structure of resumes.
 
 ## 
 - Python 3.x
@@ -15,20 +10,25 @@ This project is built using Python and regex-based logic, designed for use in HR
 - Flask 
 - JSON , NLP
 
+## USAGE
+clone the repo . create a virtual env . install dependencies .run the srever.
+
 ## API Endpoint
 ### `POST /parse`
-
+### `GET /ping`
 Accepts a resume file and returns extracted information in JSON format.
 
-#### Request
+POST /parse
+Request
+Method: POST
+Endpoint: /parse
+Content-Type: multipart/form-data
+Body: key = file, value = uploaded .pdf or .docx file
 
-- **Method:** `POST`
-- **URL:** `/parse`
-- **Headers:** `Content-Type: multipart/form-data`
-- **Body:**  
-  - `file`: Resume file in `.pdf` or `.docx` format
- 
-curl -X POST http://localhost:5000/parse \
-  -F "file=@/path/to/resume.pdf"
+Example (using Postman):
+Go to Body → form-data
+Add a key called file, choose a file (.pdf or .docx)
+send
 
+> Note: This API uses rule-based parsing (regex and keyword matching), so accuracy may vary depending on the formatting and structure of resumes.Not 100% precise .
 

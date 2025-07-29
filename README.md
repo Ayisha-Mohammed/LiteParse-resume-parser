@@ -3,7 +3,6 @@
 A lightweight API that extracts structured information from pdf /doc resume — iname, email, phone number, education, skills, and basic project details.
 This project is built using Python and regex-based logic, designed for use in HR tools, ATS systems, or resume-based applications.
 
-
 ## 
 - Python 3.x
 - Regex (Pattern Matching)

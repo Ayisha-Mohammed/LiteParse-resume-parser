@@ -17,6 +17,7 @@ clone the repo . create a virtual env . install dependencies .run the srever.
 ### `GET /ping`
 Accepts a resume file and returns extracted information in JSON format.
 
+GET /ping > headers : [key > Content-Type] [value > application/json] >send -------------- to check api alive .
 POST /parse
 Request
 Method: POST
@@ -29,5 +30,6 @@ Go to Body → form-data
 Add a key called file, choose a file (.pdf or .docx)
 send
 
+Live API :https://liteparse-resume-parser.onrender.com
 > Note: This API uses rule-based parsing (regex and keyword matching), so accuracy may vary depending on the formatting and structure of resumes.Not 100% precise .
 

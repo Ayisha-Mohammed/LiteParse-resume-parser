@@ -26,6 +26,6 @@ def parse():
         return jsonify({'success': False, 'error': 'Internal Server Error', 'details': str(e)}), 500
 
 
-@parser_bp.route('/ping', methods=['GET'])
+@parser_bp.route('/ping', methods=['GET','OPTIONS'])
 def ping():
     return jsonify({"success": True, "message": "API is alive"}), 200

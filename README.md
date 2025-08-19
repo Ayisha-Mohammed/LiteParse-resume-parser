@@ -10,7 +10,7 @@ This project is built using Python and regex-based logic, designed for use in HR
 - JSON , NLP
 
 ## USAGE
-clone the repo . create a virtual env . install dependencies .run the server.
+clone the repo . create a virtual env . install dependencies .run the server
 
 ## API Endpoint
 ### `POST /parse`

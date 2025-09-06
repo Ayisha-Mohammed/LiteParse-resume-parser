@@ -7,7 +7,7 @@ This project is built using Python and regex-based logic, designed for use in HR
 - Python 3.x
 - Regex (Pattern Matching)
 - Flask 
-- JSON , NLP
+- JSON , NLp
 
 ## USAGE
 clone the repo . create a virtual env . install dependencies .run the server

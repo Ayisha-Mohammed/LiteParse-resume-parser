@@ -9,7 +9,7 @@ This project is built using Python and regex-based logic, designed for use in HR
 - Flask 
 - JSON , NLP
 ## USAGE
-clone the repo . create a virtual env . install dependencies .run the server
+clone the repo . create a virtual env . install dependencies .run the servers
 
 ## API Endpoint
 ### `POST /parse`

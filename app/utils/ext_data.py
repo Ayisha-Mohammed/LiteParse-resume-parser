@@ -17,7 +17,7 @@ def extract_phone(text):
     if match :
       return match.group()
     else:
-       None
+      return None
 
 def extract_name(resume_text):
     lines = [line.strip() for line in resume_text.split('\n') if line.strip()]
@@ -172,6 +172,16 @@ def extract_latest_degree_and_year(text):
     }
 
 
+
+
+
+
+
+
+
+
+
+
 def extract_projects(text):
     lines = text.split('\n')
     titles = []
@@ -184,20 +194,50 @@ def extract_projects(text):
         clean = line.strip()
         lower = clean.lower()
 
-        # Step 1: Start capturing
+        # Step 1: Start capturing when line looks like a project section
         if not capture and any(kw in lower for kw in project_keywords):
             capture = True
             continue
 
-        # Step 2: Stop at another section
+        # Step 2: Stop capturing if line looks like a new section
         if capture and any(kw in lower for kw in other_sections):
             break
 
-        # Step 3: Only get clean, likely title lines (non-bullets, not too long, not too short)
-        if capture and clean and not clean.startswith(('▪', '-', '*')) and 3 <= len(clean.split()) <= 10:
-            titles.append(clean)
+        # Step 3: If capturing, clean the line and add
+        if capture and clean:
+            # Remove bullets, dashes, numbers, etc.
+            clean = re.sub(r'^[\-\*\▪\d\.\)\(]+\s*', '', clean)
+            if 1 <= len(clean.split()) <= 15:  # allow slightly longer project names
+                titles.append(clean)
 
     return titles
+
+# def extract_projects(text):
+#     lines = text.split('\n')
+#     titles = []
+#     capture = False
+
+#     project_keywords = ['project', 'projects', 'academic project', 'major project', 'minor project', 'report']
+#     other_sections = ['education', 'skills', 'certification', 'experience', 'internship', 'contact', 'summary', 'profile', 'personal']
+
+#     for line in lines:
+#         clean = line.strip()
+#         lower = clean.lower()
+
+#         # Step 1: Start capturing
+#         if not capture and any(kw in lower for kw in project_keywords):
+#             capture = True
+#             continue
+
+#         # Step 2: Stop at another section
+#         if capture and any(kw in lower for kw in other_sections):
+#             break
+
+#         # Step 3: Only get clean, likely title lines (non-bullets, not too long, not too short)
+#         if capture and clean and not clean.startswith(('▪', '-', '*')) and 1<= len(clean.split()) <= 10:
+#             titles.append(clean)
+
+#     return titles
 
 
 

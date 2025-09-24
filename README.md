@@ -17,7 +17,7 @@ clone the repo . create a virtual env . install dependencies .run the servers
 Accepts a resume file and returns extracted information in JSON format.
 
 
-use postman:
+use postman
 URL:https://liteparse-resume-parser.onrender.com
 
 GET /ping > headers : [key > Content-Type] [value > application/json] >send -------------- to check api alive .

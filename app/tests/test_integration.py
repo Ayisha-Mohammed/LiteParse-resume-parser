@@ -4,7 +4,7 @@ import sys
 import os
 
 # Make app imports work
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils.ext_data import (
     extract_phone,
@@ -13,8 +13,7 @@ from utils.ext_data import (
     extract_education,
     extract_latest_degree_and_year,
     extract_projects,
-
-    extract_skills
+    extract_skills,
 )
 
 
@@ -33,10 +32,15 @@ def test_resume_pipeline_full(full_resume, skills_list):
     assert phone == "+91 9876543210"
     assert email == "john.doe@example.com"
     assert isinstance(edu, dict) and "degree" in edu
-    assert isinstance(latest_degree, dict) and "degree" in latest_degree and "year" in latest_degree
+    assert (
+        isinstance(latest_degree, dict)
+        and "degree" in latest_degree
+        and "year" in latest_degree
+    )
     assert set(s.lower() for s in skills) == set([s.lower() for s in skills_list])
     assert "Resume Parser" in projects
     assert "Chatbot" in projects
+
 
 # ---------------- TRICKY FORMATTING ----------------
 def test_resume_pipeline_tricky_format(tricky_resume, skills_list):
@@ -53,7 +57,10 @@ def test_resume_pipeline_tricky_format(tricky_resume, skills_list):
     assert phone == "9876543210"
     assert email == "john.doe@example.com"
     assert isinstance(edu, dict) and "degree" in edu
-    assert isinstance(latest_degree, dict) and "degree" in latest_degree and "year" in latest_degree
+    assert (
+        isinstance(latest_degree, dict)
+        and "degree" in latest_degree
+        and "year" in latest_degree
+    )
     assert set(s.lower() for s in skills) == set([s.lower() for s in skills_list])
     assert "Resume Parser" in projects
- 

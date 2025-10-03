@@ -1,7 +1,7 @@
-
 # ---------------- FIXTURES --------------
 
 import pytest
+
 
 @pytest.fixture
 def full_resume():
@@ -22,6 +22,7 @@ def full_resume():
     Chatbot
     """
 
+
 @pytest.fixture
 def tricky_resume():
     return """
@@ -32,11 +33,10 @@ def tricky_resume():
     B.Tech in Computer Science 2020
 
     Skills include Python, java, sql, aws
-
-     
     Projects
     Resume Parser
     """
+
 
 @pytest.fixture
 def skills_list():

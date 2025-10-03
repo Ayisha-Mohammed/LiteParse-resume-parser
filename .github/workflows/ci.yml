@@ -24,8 +24,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Run Black (auto formatting)
+      run: black .
+
+    - name: Run Flake8 (linting)
+      run: flake8 .
+
+
     - name: Run tests
       run: |
         export PYTHONPATH=$PYTHONPATH:$(pwd)
         pytest app/tests
 
+    - name: Deploy to Render
+      run: |
+        curl -X POST \
+        -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+        -H "Accept: application/json" \
+        https://liteparse-resume-parser.onrender.com
+        

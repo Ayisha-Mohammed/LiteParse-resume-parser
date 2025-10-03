@@ -5,6 +5,7 @@ from app import create_app
 from conftest import full_resume, tricky_resume  # fixtures
 from docx import Document
 
+
 # -------------------- Client Fixture --------------------
 @pytest.fixture
 def client():
@@ -13,6 +14,7 @@ def client():
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
+
 
 # -------------------- Helpers --------------------
 def make_docx_file(text: str) -> io.BytesIO:
@@ -24,6 +26,7 @@ def make_docx_file(text: str) -> io.BytesIO:
     buffer.seek(0)
     return buffer
 
+
 # -------------------- Health Check --------------------
 def test_health_check(client):
     """Test the /ping endpoint."""
@@ -31,14 +34,13 @@ def test_health_check(client):
     assert response.status_code == 200
     assert response.json == {"success": True, "message": "API is alive"}
 
+
 # -------------------- Parse Resume Tests --------------------
 def test_parse_resume_full(client, full_resume):
     """Test POST /parse endpoint with full_resume."""
     fake_file = make_docx_file(full_resume)
     data = {"file": (fake_file, "resume.docx")}
-    response = client.post(
-        "/parse", data=data, content_type="multipart/form-data"
-    )
+    response = client.post("/parse", data=data, content_type="multipart/form-data")
 
     assert response.status_code == 200, response.data
     assert response.json["success"] is True
@@ -55,13 +57,12 @@ def test_parse_resume_full(client, full_resume):
     assert "Name" in parsed
     # TODO: Later add: assert "skills" in parsed
 
+
 def test_parse_resume_tricky(client, tricky_resume):
     """Test POST /parse endpoint with tricky formatting resume."""
     fake_file = make_docx_file(tricky_resume)
     data = {"file": (fake_file, "tricky_resume.docx")}
-    response = client.post(
-        "/parse", data=data, content_type="multipart/form-data"
-    )
+    response = client.post("/parse", data=data, content_type="multipart/form-data")
 
     assert response.status_code == 200, response.data
     assert response.json["success"] is True

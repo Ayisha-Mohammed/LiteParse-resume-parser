@@ -3,6 +3,7 @@ import docx
 import io
 from io import BytesIO
 
+
 def extracted_text_from_pdf(resume_file):
     try:
         # Handle both FileStorage and BytesIO
@@ -38,6 +39,7 @@ def extracted_text_from_docx(resume_file):
     except Exception as e:
         print("DOCX parsing error:", e)
         return {"error": f"Failed to read DOCX: {str(e)}"}
+
 
 # import fitz
 # import docx
@@ -83,5 +85,3 @@ def extracted_text_from_docx(resume_file):
 # # def load_sklist(filepath):
 # #    with open(filepath, 'r' , encoding='utf-8') as f:
 # #       return[line.strip() for line in f if line.strip()]
-   
- 

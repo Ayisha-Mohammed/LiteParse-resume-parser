@@ -1,6 +1,4 @@
 from flask import Flask
-from app.routes.parser_routes import parser_bp
-from app.routes.parser_routes import auth_bp
 from .limiter import limiter
 import logging
 from flask_cors import CORS
@@ -37,7 +35,8 @@ def create_app():
         from app.models import User, ResumeLog
         db.create_all()
 
-    
+    from app.routes.parser_routes import parser_bp
+    from app.routes.parser_routes import auth_bp
     # Register blueprints
     app.register_blueprint(parser_bp)
     app.register_blueprint(auth_bp)

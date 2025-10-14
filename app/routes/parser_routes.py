@@ -12,7 +12,6 @@ auth_bp = Blueprint("auth", __name__)
 @jwt_required()
 
 @parser_bp.route("/parse", methods=["POST"])
-
 @limiter.limit("5 per minute")
 def parse():
     try:

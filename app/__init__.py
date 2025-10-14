@@ -19,26 +19,28 @@ def create_app():
     # Load config
     app.config.from_object(Config)
 
-     # CORS & logging
+    # CORS & logging
     CORS(app)
     logging.basicConfig(level=logging.INFO)
     app.logger.setLevel(logging.INFO)
-    
+
     # Initialize extensions with app
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
     limiter.init_app(app)
-    
+
     # Create tables automatically
     with app.app_context():
         from app.models import User, ResumeLog
+
         db.create_all()
 
     from app.routes.parser_routes import parser_bp
     from app.routes.parser_routes import auth_bp
+
     # Register blueprints
     app.register_blueprint(parser_bp)
     app.register_blueprint(auth_bp)
-    
+
     return app

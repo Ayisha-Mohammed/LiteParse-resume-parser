@@ -9,8 +9,9 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 parser_bp = Blueprint("parser", __name__)
 auth_bp = Blueprint("auth", __name__)
-@jwt_required()
 
+
+@jwt_required()
 @parser_bp.route("/parse", methods=["POST"])
 @limiter.limit("5 per minute")
 def parse():
@@ -41,8 +42,10 @@ def parse():
             ),
             500,
         )
-    
+
     # Register new user
+
+
 @auth_bp.route("/register", methods=["POST"])
 def register():
     data = request.get_json()
@@ -58,6 +61,7 @@ def register():
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": "User created", "api_key": user.api_key}), 201
+
 
 # Login user
 @auth_bp.route("/login", methods=["POST"])

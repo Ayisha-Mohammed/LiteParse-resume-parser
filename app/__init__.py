@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask
 from .limiter import limiter
 import logging
 from flask_cors import CORS
@@ -8,8 +8,8 @@ from flask_jwt_extended import JWTManager
 from config import Config
 import os
 
-# template_dir = os.path.abspath("templates") 
-app=Flask(__name__)
+# template_dir = os.path.abspath("templates")
+app = Flask(__name__)
 # Initialize extensions (no app yet)
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -20,9 +20,8 @@ def create_app():
 
     # Load config
     app.config.from_object(Config)
-      #Set secret key for Flask session
+    # Set secret key for Flask session
     app.secret_key = os.environ.get("JWT_SECRET_KEY") or "dev-secret-key"
-
 
     # CORS & logging
     CORS(app)
@@ -41,12 +40,11 @@ def create_app():
 
         db.create_all()
 
-    from app.routes.parser_routes import parser_bp,auth_bp, main_bp
+    from app.routes.parser_routes import parser_bp, auth_bp, main_bp
 
     # Register blueprints
     app.register_blueprint(parser_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
-
 
     return app

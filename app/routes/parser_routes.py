@@ -12,6 +12,7 @@ auth_bp = Blueprint("auth", __name__)
 
 main_bp = Blueprint("main", __name__)
 
+
 @main_bp.route("/")
 def home():
     return render_template("home.html")

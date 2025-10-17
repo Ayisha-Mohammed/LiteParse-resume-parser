@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     color: #2c3e50;
+    /* color: #181512; */
 }
 
 .container {
@@ -21,6 +22,7 @@ body {
 h1 {
     text-align: center;
     font-size: 3em;
+    /* color: #e48c09; */
     color: #1f3d7a;
     margin-bottom: 15px;
 }
@@ -29,13 +31,16 @@ p.subtitle {
     text-align: center;
     font-size: 1.3em;
     color: #4a5568;
+    /* color: #1a1712; */
     margin-bottom: 60px;
 }
 
 /* Section headings */
 h2 {
+    /* color: #e49503; */
     color: #1f3d7a;
     font-size: 1.7em;
+    /* border-bottom: 2px solid #111314; */
     border-bottom: 2px solid #63b3ed;
     padding-bottom: 8px;
     margin-bottom: 30px;
@@ -50,6 +55,7 @@ ul, ol {
 
 /* Endpoint cards */
 .endpoint-card {
+    /* background-color: #fdf5d9; */
     background-color: #f9fafb;
     border-radius: 16px;
     padding: 30px;
@@ -66,7 +72,8 @@ ul, ol {
 .endpoint-card h3 {
     margin-top: 0;
     font-size: 1.5em;
-    color: #1f3d7a;
+    /* color: #f09e07; */
+    color: #26478a;
 }
 
 .endpoint-card p {
@@ -76,18 +83,20 @@ ul, ol {
 }
 
 .endpoint-card pre {
-    background-color: #edf2f7;
+    background-color: #e9edf0;
     padding: 15px;
     border-radius: 10px;
     overflow-x: auto;
     font-size: 0.95em;
-    color: #2c3e50;
+    /* color: #020201; */
+    color: #33506d;
     line-height: 1.5;
 }
 
 /* Badges / Steps */
 .badge {
     display: inline-block;
+    /* background-color: #edd863; */
     background-color: #63b3ed;
     color: #fff;
     padding: 6px 18px;
@@ -107,12 +116,14 @@ ul, ol {
 .note {
     text-align: center;
     color: #718096;
+     /* color: #f7ad0d; */
     font-size: 0.95em;
     margin-top: 60px;
 }
 
 /* Example Output Styling */
 .example-output {
+    /* background-color: #fff3bb; */
     background-color: #f0f4f8;
     padding: 20px;
     border-radius: 12px;
@@ -130,7 +141,7 @@ ul, ol {
     font-size: 0.9em;
     color: #4a5568;
     text-decoration: none;
-    background-color: #edf2f7;
+    background-color: #e7f2f7;
     padding: 6px 12px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);

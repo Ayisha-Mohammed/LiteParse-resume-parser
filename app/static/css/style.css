@@ -7,7 +7,6 @@ body {
     color: #2c3e50;
 }
 
-/* Centered container with proper side padding */
 .container {
     max-width: 950px;
     margin: 50px auto;
@@ -15,6 +14,7 @@ body {
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: 0 12px 35px rgba(0,0,0,0.07);
+    position: relative; 
 }
 
 /* Header */
@@ -121,4 +121,24 @@ ul, ol {
     font-size: 0.95em;
     line-height: 1.6;
     overflow-x: auto;
+}
+.container .footer-git {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;                   /* center horizontally */
+    transform: translateX(-50%); /* center the element */
+    font-size: 0.9em;
+    color: #4a5568;
+    text-decoration: none;
+    background-color: #edf2f7;
+    padding: 6px 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.container .footer-git:hover {
+    color: #1f3d7a;              /* change text color on hover */
+    background-color: #e2e8f0;   /* subtle background change on hover */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); /* keep shadow same */
 }

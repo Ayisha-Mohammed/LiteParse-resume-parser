@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, render_template
 from app.services.res_parser import parse_resume
 from app.limiter import limiter
 from app import db, bcrypt
@@ -10,9 +10,15 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 parser_bp = Blueprint("parser", __name__)
 auth_bp = Blueprint("auth", __name__)
 
+main_bp = Blueprint("main", __name__)
 
-@jwt_required()
+@main_bp.route("/")
+def home():
+    return render_template("home.html")
+
+
 @parser_bp.route("/parse", methods=["POST"])
+@jwt_required()
 @limiter.limit("5 per minute")
 def parse():
     try:

@@ -1,0 +1,124 @@
+/* Base */
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+    color: #2c3e50;
+}
+
+/* Centered container with proper side padding */
+.container {
+    max-width: 950px;
+    margin: 50px auto;
+    padding: 50px 40px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.07);
+}
+
+/* Header */
+h1 {
+    text-align: center;
+    font-size: 3em;
+    color: #1f3d7a;
+    margin-bottom: 15px;
+}
+
+p.subtitle {
+    text-align: center;
+    font-size: 1.3em;
+    color: #4a5568;
+    margin-bottom: 60px;
+}
+
+/* Section headings */
+h2 {
+    color: #1f3d7a;
+    font-size: 1.7em;
+    border-bottom: 2px solid #63b3ed;
+    padding-bottom: 8px;
+    margin-bottom: 30px;
+}
+
+/* Lists */
+ul, ol {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+/* Endpoint cards */
+.endpoint-card {
+    background-color: #f9fafb;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.07);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.endpoint-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+}
+
+.endpoint-card h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    color: #1f3d7a;
+}
+
+.endpoint-card p {
+    margin: 12px 0;
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+.endpoint-card pre {
+    background-color: #edf2f7;
+    padding: 15px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 0.95em;
+    color: #2c3e50;
+    line-height: 1.5;
+}
+
+/* Badges / Steps */
+.badge {
+    display: inline-block;
+    background-color: #63b3ed;
+    color: #fff;
+    padding: 6px 18px;
+    font-size: 0.9em;
+    border-radius: 25px;
+    margin-right: 12px;
+    margin-bottom: 10px; /* adds vertical breathing space */
+}
+
+/* Benefits */
+.benefits li {
+    margin-bottom: 14px;
+    line-height: 1.7;
+}
+
+/* Footer note */
+.note {
+    text-align: center;
+    color: #718096;
+    font-size: 0.95em;
+    margin-top: 60px;
+}
+
+/* Example Output Styling */
+.example-output {
+    background-color: #f0f4f8;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+    line-height: 1.6;
+    overflow-x: auto;
+}

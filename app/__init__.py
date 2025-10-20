@@ -1,19 +1,22 @@
 from flask import Flask
-from .limiter import limiter
+from app.limiter import limiter
 import logging
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from config import Config
+# from flask_migrate import Migrate
 import os
 
-# template_dir = os.path.abspath("templates")
+
 app = Flask(__name__)
 # Initialize extensions (no app yet)
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
+# migrate = Migrate()  # create Migrate instance
+
 
 
 def create_app():
@@ -30,9 +33,12 @@ def create_app():
 
     # Initialize extensions with app
     db.init_app(app)
+    # migrate.init_app(app, db)  # initialize migration with app & db
     bcrypt.init_app(app)
     jwt.init_app(app)
     limiter.init_app(app)
+  
+   
 
     # Create tables automatically
     with app.app_context():

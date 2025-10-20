@@ -13,6 +13,7 @@ def client():
     from app import create_app, db
     from app.models import User
     from flask_jwt_extended import create_access_token
+    import uuid
 
     app = create_app()
 
@@ -25,10 +26,10 @@ def client():
     # Create tables and test user
     with app.app_context():
         db.create_all()
-        test_user = User(   username="testuser",        # <-- required
-        email="test@example.com",
-        password="hashedpw",        # ideally hashed, but ok for test
-        api_key="dummy-api-key")
+        test_user = User( username="testuser",
+            email="test@example.com",
+            password="hashedpw",
+            api_key=str(uuid.uuid4()) )
         db.session.add(test_user)
         db.session.commit()
         access_token = create_access_token(identity=test_user.id)

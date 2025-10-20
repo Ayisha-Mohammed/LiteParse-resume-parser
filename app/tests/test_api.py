@@ -25,7 +25,10 @@ def client():
     # Create tables and test user
     with app.app_context():
         db.create_all()
-        test_user = User(email="test@example.com", password="hashedpw")
+        test_user = User(   username="testuser",        # <-- required
+        email="test@example.com",
+        password="hashedpw",        # ideally hashed, but ok for test
+        api_key="dummy-api-key")
         db.session.add(test_user)
         db.session.commit()
         access_token = create_access_token(identity=test_user.id)

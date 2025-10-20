@@ -6,9 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from config import Config
+
 # from flask_migrate import Migrate
 import os
-
 
 
 # Initialize extensions (no app yet)
@@ -16,7 +16,6 @@ db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 # migrate = Migrate()  # create Migrate instance
-
 
 
 def create_app():
@@ -37,8 +36,6 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
     limiter.init_app(app)
-  
-   
 
     # Create tables automatically
     with app.app_context():

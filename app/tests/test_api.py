@@ -4,15 +4,35 @@ import pytest
 from app import create_app
 from conftest import full_resume, tricky_resume  # fixtures
 from docx import Document
+from flask_jwt_extended import create_access_token
 
 
 # -------------------- Client Fixture --------------------
 @pytest.fixture
 def client():
-    """Returns a test client for the Flask app."""
+    from app import create_app, db
+    from app.models import User
+    from flask_jwt_extended import create_access_token
+
     app = create_app()
+
+    # Override config **just for testing**
     app.config["TESTING"] = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"  # in-memory DB
+    app.config["JWT_SECRET_KEY"] = "test-secret"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # Create tables and test user
+    with app.app_context():
+        db.create_all()
+        test_user = User(email="test@example.com", password="hashedpw")
+        db.session.add(test_user)
+        db.session.commit()
+        access_token = create_access_token(identity=test_user.id)
+
+    # Provide client for tests
     with app.test_client() as client:
+        client.environ_base["HTTP_AUTHORIZATION"] = f"Bearer {access_token}"
         yield client
 
 
@@ -36,6 +56,7 @@ def test_health_check(client):
 
 
 # -------------------- Parse Resume Tests --------------------
+
 def test_parse_resume_full(client, full_resume):
     """Test POST /parse endpoint with full_resume."""
     fake_file = make_docx_file(full_resume)

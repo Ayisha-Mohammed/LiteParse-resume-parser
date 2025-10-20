@@ -4,7 +4,7 @@ import pytest
 from app import create_app
 from conftest import full_resume, tricky_resume  # fixtures
 from docx import Document
-from flask_jwt_extended import create_access_token
+# from flask_jwt_extended import create_access_token
 
 
 # -------------------- Client Fixture --------------------
@@ -25,6 +25,7 @@ def client():
 
     # Create tables and test user
     with app.app_context():
+        db.drop_all()
         db.create_all()
         test_user = User( username="testuser",
             email="test@example.com",

@@ -86,7 +86,7 @@ def test_parse_resume_full(client, full_resume):
 def test_parse_resume_tricky(client, tricky_resume):
     """Test POST /parse endpoint with tricky formatting resume."""
     fake_file = make_docx_file(tricky_resume)
-    data = {"file": (fake_file, "tricky_resume.docx")}
+    data = {"resume": (fake_file, "tricky_resume.docx")}
     response = client.post("/parse", data=data, content_type="multipart/form-data")
 
     assert response.status_code == 200, response.data

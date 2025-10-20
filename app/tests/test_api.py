@@ -64,7 +64,7 @@ def test_health_check(client):
 def test_parse_resume_full(client, full_resume):
     """Test POST /parse endpoint with full_resume."""
     fake_file = make_docx_file(full_resume)
-    data = {"file": (fake_file, "resume.docx")}
+    data = {"resume": (fake_file, "resume.docx")}
     response = client.post("/parse", data=data, content_type="multipart/form-data")
 
     assert response.status_code == 200, response.data

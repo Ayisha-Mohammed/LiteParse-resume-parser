@@ -44,7 +44,7 @@ def auth_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if request.is_json:
-            verify_jwt_in_request
+            verify_jwt_in_request()
             identity = get_jwt_identity()
             if not identity:
                 return jsonify({"success": False, "error": "JWT required"}), 401

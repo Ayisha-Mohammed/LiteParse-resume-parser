@@ -10,7 +10,7 @@ from config import Config
 import os
 
 
-app = Flask(__name__)
+
 # Initialize extensions (no app yet)
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -20,7 +20,7 @@ jwt = JWTManager()
 
 
 def create_app():
-
+    app = Flask(__name__)
     # Load config
     app.config.from_object(Config)
     # Set secret key for Flask session

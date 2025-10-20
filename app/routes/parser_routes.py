@@ -38,23 +38,43 @@ def home():
 def docs():
     return render_template("docs.html")
 
-
-# 1. Add this decorator (can also move to utils.py later)
 def auth_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if request.is_json:
-            verify_jwt_in_request()
-            identity = get_jwt_identity()
-            if not identity:
-                return jsonify({"success": False, "error": "JWT required"}), 401
+        # If Authorization header exists, use JWT
+        auth_header = request.headers.get("Authorization", None)
+        if auth_header and auth_header.startswith("Bearer "):
+            try:
+                verify_jwt_in_request()
+                identity = get_jwt_identity()
+                if not identity:
+                    return jsonify({"success": False, "error": "JWT required"}), 401
+            except Exception as e:
+                return jsonify({"success": False, "error": str(e)}), 401
         else:
+            # Fallback to session-based auth
             if "user" not in session:
                 flash("Please log in first.")
                 return redirect(url_for("main.home"))
         return f(*args, **kwargs)
-
     return wrapper
+
+# 1. Add this decorator (can also move to utils.py later)
+# def auth_required(f):
+#     @wraps(f)
+#     def wrapper(*args, **kwargs):
+#         if request.is_json:
+#             verify_jwt_in_request()
+#             identity = get_jwt_identity()
+#             if not identity:
+#                 return jsonify({"success": False, "error": "JWT required"}), 401
+#         else:
+#             if "user" not in session:
+#                 flash("Please log in first.")
+#                 return redirect(url_for("main.home"))
+#         return f(*args, **kwargs)
+
+#     return wrapper
 
 
 @parser_bp.route("/parse", methods=["POST"])

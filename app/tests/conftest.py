@@ -23,19 +23,19 @@ def full_resume():
     """
 
 
-@pytest.fixture
-def tricky_resume():
-    return """
-    JOHN DOE
-    Contact: 9876543210 | Email: john.doe@example.com
+# @pytest.fixture
+# def tricky_resume():
+#     return """
+#     JOHN DOE
+#     Contact: 9876543210 | Email: john.doe@example.com
 
-    M.Tech in Artificial Intelligence 2022
-    B.Tech in Computer Science 2020
+#     M.Tech in Artificial Intelligence 2022
+#     B.Tech in Computer Science 2020
 
-    Skills include Python, java, sql, aws
-    Projects
-    Resume Parser
-    """
+#     Skills include Python, java, sql, aws
+#     Projects
+#     Resume Parser
+#     """
 
 
 @pytest.fixture

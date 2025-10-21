@@ -38,6 +38,7 @@ def home():
 def docs():
     return render_template("docs.html")
 
+
 def auth_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -57,7 +58,9 @@ def auth_required(f):
                 flash("Please log in first.")
                 return redirect(url_for("main.home"))
         return f(*args, **kwargs)
+
     return wrapper
+
 
 # 1. Add this decorator (can also move to utils.py later)
 # def auth_required(f):
@@ -85,41 +88,76 @@ def parse():
     try:
         resume_file = request.files.get("resume")
         if not resume_file:
+            if request.accept_mimetypes["application/json"] or request.is_json:
+                return jsonify({"success": False, "error": "No resume uploaded."}), 400
             flash("No resume uploaded.")
             return redirect(url_for("main.home"))
 
-        result_of_parsed_resume = parse_resume(resume_file)
+        result = parse_resume(resume_file)
 
-        # Handle known parser errors
-        if isinstance(result_of_parsed_resume, dict) and result_of_parsed_resume.get(
-            "error"
-        ):
-            if request.is_json:
-                return (
-                    jsonify(
-                        {"success": False, "error": result_of_parsed_resume["error"]}
-                    ),
-                    400,
-                )
-            flash(result_of_parsed_resume["error"])
+        # handle parser errors
+        if isinstance(result, dict) and result.get("error"):
+            if request.accept_mimetypes["application/json"] or request.is_json:
+                return jsonify({"success": False, "error": result["error"]}), 400
+            flash(result["error"])
             return redirect(url_for("main.home"))
 
-        if request.is_json:
-            return jsonify({"success": True, "data": result_of_parsed_resume}), 200
+        # ✅ JSON request → return JSON
+        if request.accept_mimetypes["application/json"] or request.is_json:
+            return jsonify({"success": True, "data": result}), 200
 
-        # For browser: render result on the same home page
+        # 🌐 Browser request → render home page with parsed data
         return render_template(
-            "home.html", parsed_data=result_of_parsed_resume, user=session.get("user")
+            "home.html", parsed_data=result, user=session.get("user")
         )
 
     except Exception as e:
         print("Unexpected error:", e)
-        if request.is_json:
+        if request.accept_mimetypes["application/json"] or request.is_json:
             return jsonify({"success": False, "error": str(e)}), 500
         flash("Something went wrong while parsing the resume.")
         return redirect(url_for("main.home"))
 
-    # Register new user
+
+# def parse():
+#     try:
+#         resume_file = request.files.get("resume")
+#         if not resume_file:
+#             flash("No resume uploaded.")
+#             return redirect(url_for("main.home"))
+
+#         result_of_parsed_resume = parse_resume(resume_file)
+
+#         # Handle known parser errors
+#         if isinstance(result_of_parsed_resume, dict) and result_of_parsed_resume.get(
+#             "error"
+#         ):
+#             if request.is_json:
+#                 return (
+#                     jsonify(
+#                         {"success": False, "error": result_of_parsed_resume["error"]}
+#                     ),
+#                     400,
+#                 )
+#             flash(result_of_parsed_resume["error"])
+#             return redirect(url_for("main.home"))
+
+#         if request.is_json:
+#             return jsonify({"success": True, "data": result_of_parsed_resume}), 200
+
+#         # For browser: render result on the same home page
+#         return render_template(
+#             "home.html", parsed_data=result_of_parsed_resume, user=session.get("user")
+#         )
+
+#     except Exception as e:
+#         print("Unexpected error:", e)
+#         if request.is_json:
+#             return jsonify({"success": False, "error": str(e)}), 500
+#         flash("Something went wrong while parsing the resume.")
+#         return redirect(url_for("main.home"))
+
+# Register new user
 
 
 @auth_bp.route("/register", methods=["POST"])
@@ -193,7 +231,7 @@ def login():
     if user and bcrypt.check_password_hash(user.password, password):
         session["user"] = {"id": user.id, "username": user.username}
         if request.is_json:
-            access_token = create_access_token(identity=user.id)
+            access_token = create_access_token(identity=str(user.id))
             return (
                 jsonify(
                     {

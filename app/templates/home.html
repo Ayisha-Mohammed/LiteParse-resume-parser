@@ -6,233 +6,198 @@
   <title>LiteResume Parser</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="flex flex-col min-h-screen bg-gray-100 text-gray-800 font-sans">
 
   <!-- Header -->
   <header class="bg-white shadow p-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-indigo-600">LiteResume</h1>
     <div class="flex items-center space-x-2">
-      <!-- <button onclick="toggleDocs()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition">API Docs</button> -->
       <a href="{{url_for('main.docs')}}" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition">API Docs</a>
 
       {% if not user %}
       <button onclick="showForm('register')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
       <button onclick="showForm('login')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Login</button>
       {% else %}
-      <span class="mr-4"></span>
-      <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Logout</a>
+      <a href="{{ url_for('auth.logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Logout</a>
       {% endif %}
     </div>
   </header>
 
   <!-- Intro Message -->
-  <section class="max-w-3xl mx-auto mt-8 p-6 text-center bg-indigo-50 rounded shadow">
+  <section class="max-w-3xl mx-auto mt-20 p-6 text-center bg-indigo-50 rounded shadow">
     <h2 class="text-2xl font-bold text-indigo-700 mb-2">Welcome to LiteResume Parser</h2>
     <p class="text-indigo-600 text-lg">Upload your resume in PDF or DOC format and quickly extract structured information like name, email, phone, skills, education, and projects.</p>
   </section>
 
-  <!-- Main Content -->
-  <main class="max-w-3xl mx-auto mt-6 p-6 bg-white shadow rounded">
-
-    <!-- Auth Forms -->
-    {% if not user %}
-    <div id="authArea">
-
-      <!-- Register Form -->
-      <form id="registerForm" action="{{ url_for('auth.register') }}" method="POST" class="hidden space-y-4">
-        <h2 class="text-xl font-semibold text-gray-700">Register</h2>
-        <input name="username" placeholder="Username" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <input name="email" type="email" placeholder="Email" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <input name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
-        <p class="text-sm text-gray-600">
-          Already have an account? <span onclick="showForm('login')" class="text-blue-500 cursor-pointer hover:underline">Click here</span>
-        </p>
-      </form>
-
-      <!-- Login Form -->
-      <form id="loginForm" action="{{ url_for('auth.login') }}" method="POST" class="hidden space-y-4">
-        <h2 class="text-xl font-semibold text-gray-700">Login</h2>
-        <input name="email" type="email" placeholder="Email" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
-        <input name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
-        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Login</button>
-        <p class="text-sm text-gray-600">
-          Don't have an account? <span onclick="showForm('register')" class="text-blue-500 cursor-pointer hover:underline">Click here</span>
-        </p>
-      </form>
-    </div>
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="max-w-6xl mx-auto mt-6 space-y-4">
+        {% for category, message in messages %}
+          <div class="flash-message p-4 rounded 
+              {% if category == 'success' %}bg-green-100 border-l-4 border-green-500 text-green-700{% endif %}
+              {% if category == 'error' %}bg-red-100 border-l-4 border-red-500 text-red-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
     {% endif %}
+  {% endwith %}
 
+  <script>
+    setTimeout(() => {
+      const flashes = document.querySelectorAll('.flash-message');
+      flashes.forEach(f => f.remove());
+    }, 1000);
+  </script>
+
+  {% if not user %}
+  <!-- Get Started Button -->
+  <div class="text-center mt-10" id="getStartedDiv">
+    <button onclick="startRegister()" 
+       class="bg-indigo-500 text-white px-6 py-2 rounded hover:bg-indigo-600 transition text-lg font-semibold">
+      Get Started
+    </button>
+  </div>
+
+  <!-- Auth Forms -->
+  <div id="authArea" class="mt-6 space-y-6 max-w-md mx-auto py-5">
+    <!-- Register Form -->
+    <form id="registerForm" action="{{ url_for('auth.register') }}" method="POST" 
+          class="hidden bg-white rounded shadow p-6 space-y-4 mt-5 mb-10">
+      <h2 class="text-xl font-semibold text-gray-700 text-center">Register</h2>
+      <input name="username" placeholder="Username" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input name="email" type="email" placeholder="Email" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <input name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <div class="text-center">
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
+      </div>
+      <p class="text-sm text-gray-600 text-center">
+        Already have an account? <span onclick="showForm('login')" class="text-blue-500 cursor-pointer hover:underline">Click here</span>
+      </p>
+    </form>
+
+    <!-- Login Form -->
+    <form id="loginForm" action="{{ url_for('auth.login') }}" method="POST" 
+          class="hidden bg-white rounded shadow p-6 space-y-4 mt-50 mb-10">
+      <h2 class="text-xl font-semibold text-gray-700 text-center">Login</h2>
+      <input name="email" type="email" placeholder="Email" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
+      <input name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400">
+      <div class="text-center">
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">Login</button>
+      </div>
+      <p class="text-sm text-gray-600 text-center">
+        Don't have an account? <span onclick="showForm('register')" class="text-blue-500 cursor-pointer hover:underline">Click here</span>
+      </p>
+    </form>
+  </div>
+  {% endif %}
+
+  {% if user %}
+  <!-- Main Content -->
+  <main class="mx-auto mt-6 max-w-3xl p-6 bg-white shadow rounded">
     <!-- Upload Resume -->
-    {% if user %}
-    <div id="uploadArea" class="mt-6">
-      <h2 class="text-xl font-semibold mb-2 text-gray-700">Upload Resume</h2>
-      <form action="{{ url_for('parser.parse') }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-center space-y-2 border-2 border-dashed border-gray-300 p-6 rounded hover:border-indigo-400 transition">
-        <label for="resume" class="cursor-pointer text-gray-600 hover:text-indigo-600">Drag & Drop your resume here or click to select</label>
-        <small class="text-gray-500">PDF, DOC, up to 5MB</small>
-        <input id="resume" type="file" name="resume" class="hidden">
-        <p id="fileName" class="text-sm text-green-600 mt-1"></p>
-        <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition">Parse Resume</button>
-      </form>
-    </div>
+    <h2 class="text-xl font-semibold mb-2 text-gray-700 text-center">Upload Resume</h2>
+    <form action="{{ url_for('parser.parse') }}" method="POST" enctype="multipart/form-data"
+          class="border-2 border-dashed border-gray-300 p-6 rounded hover:border-indigo-400 transition flex flex-col space-y-2">
+      <label for="resume" class="cursor-pointer text-gray-600 hover:text-indigo-600 text-center">Drag & Drop your resume here or click to select</label>
+      <small class="text-gray-500 text-center">PDF, DOC, up to 5MB</small>
+      <input id="resume" type="file" name="resume" class="hidden">
+      <p id="fileName" class="text-sm text-green-600 mt-1 text-center"></p>
+      <button type="submit" class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600 transition mx-auto">Parse Resume</button>
+    </form>
 
     <!-- Parsed Result -->
     {% if parsed_data %}
     <div id="resultArea" class="mt-6 bg-gray-50 p-6 rounded shadow space-y-3">
       <h2 class="text-xl font-semibold text-gray-700 mb-2">Parsed Resume</h2>
       <div class="space-y-2">
-        <p><strong>Name:</strong> {{ parsed_data.name }}</p>
-        <p><strong>Email:</strong> {{ parsed_data.email }}</p>
-        <p><strong>Phone:</strong> {{ parsed_data.phone }}</p>
-        <p><strong>Skills:</strong> {{ parsed_data.skills|join(', ') }}</p>
-        {% if parsed_data.education %}
-        <p><strong>Education:</strong> {{ parsed_data.education }}</p>
+        <p><strong>Name:</strong> {{ parsed_data["Name"] }}</p>
+        <p><strong>Email:</strong> {{ parsed_data["Email"] }}</p>
+        <p><strong>Phone:</strong> {{ parsed_data["Phone"] }}</p>
+        <p><strong>Skills:</strong> {{ parsed_data["Skills"] }}</p>
+        {% if parsed_data["Education"] %}
+        <p><strong>Education:</strong> {{ parsed_data["Education"]["degree"] }}</p>
         {% endif %}
-        {% if parsed_data.projects %}
-        <p><strong>Projects:</strong> {{ parsed_data.projects }}</p>
+        {% if parsed_data["Projects"] %}
+        <p><strong>Projects:</strong> {{ parsed_data["Projects"]|join(', ') }}</p>
         {% endif %}
+      </div>
+
+      <!-- Download Button -->
+      <div class="flex justify-center mt-4">
+        <a href="{{ url_for('parser.download_parsed') }}" 
+           class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition flex items-center space-x-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H7a1 1 0 110-2h7V3H4a1 1 0 00-1 1v12h2V4z" clip-rule="evenodd" />
+            <path d="M7 9l3 3 3-3H7z" />
+          </svg>
+          <span>Download JSON</span>
+        </a>
       </div>
     </div>
-    {% endif %} 
-     {% endif %}
-
-    <!-- Documentation Section (Hidden by default)
-    <div id="docsSection" class="hidden mt-6 bg-gray-50 p-6 rounded shadow space-y-4">
-      <h2 class="text-2xl font-bold text-indigo-700 mb-2">LiteParse Resume Parser API</h2>
-      <p class="text-indigo-600 text-lg">Extract structured information from resumes (PDF/DOCX) quickly and reliably.</p>
-
-      <div class="space-y-4">
-        <div>
-          <h3 class="font-semibold">Quick Start</h3>
-          <ol class="list-decimal ml-6">
-            <li>Register to get your API key.</li>
-            <li>Login to get JWT access token.</li>
-            <li>Use the <code>/parse</code> endpoint with JWT or API key.</li>
-          </ol>
-        </div>
-
-        <div>
-          <h3 class="font-semibold">API Endpoints</h3>
-
-          <div class="p-2 border rounded mb-2 bg-white shadow">
-            <h4 class="font-semibold">⚡ /ping</h4>
-            <p>Check if the API is alive.</p>
-            <pre>GET /ping</pre>
-          </div>
-
-          <div class="p-2 border rounded mb-2 bg-white shadow">
-            <h4 class="font-semibold">📝 /register</h4>
-            <p>Create a new user and receive an API key.</p>
-            <pre>POST /register
-Body:
-{
-  "email": "your_email",
-  "password": "your_password"
-}</pre>
-          </div>
-
-          <div class="p-2 border rounded mb-2 bg-white shadow">
-            <h4 class="font-semibold">🔑 /login</h4>
-            <p>Login to get JWT access token and API key.</p>
-            <pre>POST /login
-Body:
-{
-  "email": "your_email",
-  "password": "your_password"
-}</pre>
-          </div>
-
-          <div class="p-2 border rounded mb-2 bg-white shadow">
-            <h4 class="font-semibold">📄 /parse</h4>
-            <p>Parse resumes using JWT or API key.</p>
-            <pre>POST /parse
-Headers:
-  Authorization: Bearer &lt;JWT&gt;
-  or X-API-Key: &lt;API_KEY&gt;
-Body:
-  file: resume.pdf</pre>
-          </div>
-        </div>
-
-        <div>
-          <h3 class="font-semibold">Benefits</h3>
-          <ul class="list-disc ml-6">
-            <li>Saves time for recruiters</li>
-            <li>Easy integration with HR tools or ATS</li>
-            <li>Automates resume parsing with structured JSON output</li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 class="font-semibold">Example Output</h3>
-          <pre>{
-  "success": true,
-  "data": {
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "+1 234 567 890",
-    "education": [
-      {
-        "degree": "B.Sc. Computer Science",
-        "institution": "ABC University",
-        "year": "2023"
-      }
-    ],
-    "skills": ["Python", "Flask", "SQL", "Regex"],
-    "projects": [
-      {
-        "title": "Resume Parser API",
-        "description": "A lightweight API to parse resumes into structured JSON"
-      }
-    ]
-  }
-}</pre>
-        </div>
-
-        <p class="text-sm text-gray-500">Keep your API key and JWT confidential. Parsing is rule-based and may vary depending on resume formatting.</p>
-        <a href="https://github.com/Ayisha-Mohammed/LiteParse-resume-parser" target="_blank" class="text-purple-600 hover:underline">View on GitHub</a>
-      </div>
-    </div> -->
-
+    {% endif %}
   </main>
+  {% endif %}
 
-  <!-- JS for toggling forms, file input, and docs -->
-  <script>
-    function showForm(type) {
-      const registerForm = document.getElementById('registerForm');
-      const loginForm = document.getElementById('loginForm');
-      if(type === 'register') {
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-      } else {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-      }
+  <footer class="mt-auto text-center text-gray-500 text-sm">
+    &copy; 2025 | Built with passion❤️ and Python Flask
+  </footer>
+
+  <!-- JS for toggling forms, file input -->
+ <script>
+  function startRegister() {
+    document.getElementById('getStartedDiv').style.display = 'none';
+    showForm('register');
+    scrollToForm('registerForm');
+  }
+
+  function showForm(type) {
+    const registerForm = document.getElementById('registerForm');
+    const loginForm = document.getElementById('loginForm');
+    if(type === 'register') {
+      registerForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+      scrollToForm('registerForm');
+    } else {
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden');
+      scrollToForm('loginForm');
     }
+  }
 
-    // Docs toggle
-    function toggleDocs() {
-      const docs = document.getElementById('docsSection');
-      docs.classList.toggle('hidden');
-      docs.scrollIntoView({ behavior: 'smooth' });
+  function scrollToForm(formId) {
+    const form = document.getElementById(formId);
+    if (form) {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+  }
 
-    // File input click
-    const resumeInput = document.getElementById('resume');
-    if(resumeInput) {
-      resumeInput.previousElementSibling.addEventListener('click', () => resumeInput.click());
+  const resumeInput = document.getElementById('resume');
+  if(resumeInput) {
+    resumeInput.previousElementSibling.addEventListener('click', () => resumeInput.click());
+    resumeInput.addEventListener('change', function() {
+      const fileNameDisplay = document.getElementById('fileName');
+      fileNameDisplay.textContent = this.files.length ? `File uploaded: ${this.files[0].name}` : '';
+    });
+  }
 
-      // Show uploaded file name
-      resumeInput.addEventListener('change', function() {
-        const fileNameDisplay = document.getElementById('fileName');
-        if(this.files.length > 0) {
-          fileNameDisplay.textContent = `File uploaded: ${this.files[0].name}`;
-        } else {
-          fileNameDisplay.textContent = '';
-        }
-      });
-    }
-  </script>
+  const passwordInput = document.querySelector('input[name="password"]');
+const reminder = passwordInput.nextElementSibling;
+
+passwordInput.addEventListener('input', () => {
+  const val = passwordInput.value;
+  let strength = 0;
+  if (val.length >= 8) strength++;
+  if (/[A-Z]/.test(val)) strength++;
+  if (/[a-z]/.test(val)) strength++;
+  if (/[0-9]/.test(val)) strength++;
+  if (/[\W]/.test(val)) strength++;
+  
+  reminder.textContent = `Password strength: ${strength}/5`;
+  reminder.className = `text-xs mt-1 ${strength < 5 ? 'text-red-500' : 'text-green-500'}`;
+});
+</script>
 
 </body>
 </html>

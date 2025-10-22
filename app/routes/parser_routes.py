@@ -7,8 +7,9 @@ from flask import (
     redirect,
     url_for,
     session,
-    flash,
+    flash,json,send_file
 )
+from io import BytesIO 
 from app.services.res_parser import parse_resume
 from app.limiter import limiter
 from app import db, bcrypt
@@ -31,7 +32,7 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def home():
-    return render_template("home.html")
+    return render_template("home.html",user=session.get("user"),parsed_data=None)
 
 
 @main_bp.route("/docs")
@@ -81,43 +82,47 @@ def auth_required(f):
 
 
 @parser_bp.route("/parse", methods=["POST"])
-# @jwt_required()
 @auth_required
 @limiter.limit("5 per minute")
 def parse():
     try:
+        # Get uploaded file
         resume_file = request.files.get("resume")
         if not resume_file:
-            if request.accept_mimetypes["application/json"] or request.is_json:
-                return jsonify({"success": False, "error": "No resume uploaded."}), 400
-            flash("No resume uploaded.")
+            flash("No resume uploaded.", "error")
             return redirect(url_for("main.home"))
 
-        result = parse_resume(resume_file)
+        # Parse resume
+        try:
+            result = parse_resume(resume_file)
+        except Exception as parse_err:
+            print("Parser error:", parse_err)
+            flash("Failed to parse resume. Check file format.", "error")
+            return redirect(url_for("main.home"))
 
-        # handle parser errors
+        # Handle known parser errors returned as dict
         if isinstance(result, dict) and result.get("error"):
-            if request.accept_mimetypes["application/json"] or request.is_json:
-                return jsonify({"success": False, "error": result["error"]}), 400
-            flash(result["error"])
+            flash(result["error"], "error")
             return redirect(url_for("main.home"))
+        session["parsed_data"] = result
+        # Determine if request is API (JSON) or browser
+        is_api_request = request.is_json
 
-        # ✅ JSON request → return JSON
-        if request.accept_mimetypes["application/json"] or request.is_json:
-            return jsonify({"success": True, "data": result}), 200
+        if is_api_request:
+            # Return JSON for API/test clients
+            return jsonify({"success": True, "data": result["data"]}), 200
 
-        # 🌐 Browser request → render home page with parsed data
+        # Browser submission → render home.html with parsed result below upload
         return render_template(
-            "home.html", parsed_data=result, user=session.get("user")
+            "home.html",
+            parsed_data=result,
+            user=session.get("user")
         )
 
     except Exception as e:
         print("Unexpected error:", e)
-        if request.accept_mimetypes["application/json"] or request.is_json:
-            return jsonify({"success": False, "error": str(e)}), 500
-        flash("Something went wrong while parsing the resume.")
+        flash("Something went wrong while parsing the resume.", "error")
         return redirect(url_for("main.home"))
-
 
 # def parse():
 #     try:
@@ -174,34 +179,35 @@ def register():
 
     # Validate input
     if not email or not password or not username:
+        msg = "Email, password, and username are required."
         if request.is_json:
-            return jsonify({"message": "Email,password,username required"}), 400
+            return jsonify({"message": msg}), 400
         else:
-            flash("Email,password,username required")
-            return redirect(url_for("main.home"))  # your home.html
+            flash(msg, "error")
+            return redirect(url_for("main.home"))
 
     # Check if user already exists
     if User.query.filter_by(email=email).first():
+        msg = "User already exists."
         if request.is_json:
-            return jsonify({"message": "User already exists"}), 400
+            return jsonify({"message": msg}), 400
         else:
-            flash("User already exists")
+            flash(msg, "error")
             return redirect(url_for("main.home"))
+
     # Create user
     hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
-    user = User(
-        username=username,
-        email=email,
-        password=hashed_password,
-    )
+    user = User(username=username, email=email, password=hashed_password)
     db.session.add(user)
     db.session.commit()
-    # Log in user (optional)
-    # session['user'] = {"id": user.id, "username": user.email}
+
+    # # Log in user (session)
+    # session['user'] = {"id": user.id, "username": user.username}
+
     if request.is_json:
         return jsonify({"message": "User created", "api_key": user.api_key}), 201
     else:
-        flash("Registration successful")
+        flash("Registration successful!", "success")
         return redirect(url_for("main.home"))
 
 
@@ -256,8 +262,27 @@ def login():
     #     access_token = create_access_token(identity=user.id)
     #     return jsonify({"access_token": access_token, "api_key": user.api_key})
     # return jsonify({"message": "Invalid credentials"}), 401
-
+@auth_bp.route("/logout")
+def logout():
+    session.pop("user", None)  # remove user from session
+    flash("Logged out successfully", "success")
+    return redirect(url_for("main.home")) 
 
 @parser_bp.route("/ping", methods=["GET"])
 def ping():
     return jsonify({"success": True, "message": "API is alive"}), 200
+
+@parser_bp.route("/download_parsed")
+def download_parsed():
+    data = session.get("parsed_data")
+    if not data:
+        flash("No parsed data available for download","error")
+        return redirect(url_for("main.home"))
+
+    json_bytes = json.dumps(data, indent=4).encode("utf-8")
+    return send_file(
+        BytesIO(json_bytes),
+        mimetype="application/json",
+        as_attachment=True,
+        download_name="parsed_resume.json"
+    )

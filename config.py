@@ -4,7 +4,7 @@ import os
 
 class Config:
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")or "sqlite:///db.sqlite3"
     print("Inside Config, DATABASE_URL =", SQLALCHEMY_DATABASE_URI)
     # "sqlite:///db.sqlite3"   fallback for local dev
     

@@ -1,7 +1,6 @@
 # Virtual environment
 venv/
 ENV/
-env/
 .venv/
 
 # Byte-compiled / cache
@@ -17,11 +16,11 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Env files
+# Environment files
 .env
 
 # Logs
 *.log
 
-# Others
+# SQLite database
 *.sqlite3

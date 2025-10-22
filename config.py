@@ -1,10 +1,10 @@
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
 class Config:
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")or "sqlite:///db.sqlite3"
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     print("Inside Config, DATABASE_URL =", SQLALCHEMY_DATABASE_URI)
     # "sqlite:///db.sqlite3"   fallback for local dev
     

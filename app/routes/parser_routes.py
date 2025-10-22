@@ -88,31 +88,47 @@ def parse():
     try:
         # Get uploaded file
         resume_file = request.files.get("resume")
+        # Determine if API request (JSON) or browser
+        is_api_request = request.is_json or request.headers.get("Accept") == "application/json"
+
         if not resume_file:
-            flash("No resume uploaded.", "error")
-            return redirect(url_for("main.home"))
+            msg = "No resume uploaded."
+            if is_api_request:
+                return jsonify({"success": False, "error": msg}), 400
+            else:
+                flash(msg, "error")
+                return redirect(url_for("main.home"))
 
         # Parse resume
         try:
             result = parse_resume(resume_file)
         except Exception as parse_err:
             print("Parser error:", parse_err)
-            flash("Failed to parse resume. Check file format.", "error")
-            return redirect(url_for("main.home"))
+            msg = "Failed to parse resume. Check file format."
+            if is_api_request:
+                return jsonify({"success": False, "error": msg}), 500
+            else:
+                flash(msg, "error")
+                return redirect(url_for("main.home"))
 
         # Handle known parser errors returned as dict
         if isinstance(result, dict) and result.get("error"):
-            flash(result["error"], "error")
-            return redirect(url_for("main.home"))
+            msg = result["error"]
+            if is_api_request:
+                return jsonify({"success": False, "error": msg}), 400
+            else:
+                flash(msg, "error")
+                return redirect(url_for("main.home"))
+
+        # Store parsed data in session for browser download
         session["parsed_data"] = result
-        # Determine if request is API (JSON) or browser
-        is_api_request = request.is_json
 
+        # ---------------- Return response ----------------
         if is_api_request:
-            # Return JSON for API/test clients
-            return jsonify({"success": True, "data": result["data"]}), 200
+            # Always return the full result dict for API
+            return jsonify({"success": True, "data": result}), 200
 
-        # Browser submission → render home.html with parsed result below upload
+        # Browser: render home.html with parsed result
         return render_template(
             "home.html",
             parsed_data=result,
@@ -121,8 +137,11 @@ def parse():
 
     except Exception as e:
         print("Unexpected error:", e)
+        if is_api_request:
+            return jsonify({"success": False, "error": str(e)}), 500
         flash("Something went wrong while parsing the resume.", "error")
         return redirect(url_for("main.home"))
+
 
 # def parse():
 #     try:

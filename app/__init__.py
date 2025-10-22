@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from config import Config
 # from flask_migrate import Migrate
 import os
@@ -17,7 +17,7 @@ bcrypt = Bcrypt()
 jwt = JWTManager()
 # migrate = Migrate()  # create Migrate instance
 
-# load_dotenv()
+load_dotenv()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)

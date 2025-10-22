@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>LiteResume Parser</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -45,6 +45,8 @@
   {% endwith %}
 
   <script>
+    // auto-hide flashes faster (you asked for shorter time previously)
+    // we'll set to 1000ms - change if you want shorter/longer
     setTimeout(() => {
       const flashes = document.querySelectorAll('.flash-message');
       flashes.forEach(f => f.remove());
@@ -66,9 +68,16 @@
     <form id="registerForm" action="{{ url_for('auth.register') }}" method="POST" 
           class="hidden bg-white rounded shadow p-6 space-y-4 mt-5 mb-10">
       <h2 class="text-xl font-semibold text-gray-700 text-center">Register</h2>
+
       <input name="username" placeholder="Username" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
       <input name="email" type="email" placeholder="Email" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
-      <input name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+
+      <!-- NOTE: added id so JS can pick it up -->
+      <input id="registerPassword" name="password" type="password" placeholder="Password" class="w-full border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+
+      <!-- Password strength indicator -->
+      <span id="passwordStrength" class="text-xs mt-1 text-gray-500 block"></span>
+
       <div class="text-center">
         <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Register</button>
       </div>
@@ -144,60 +153,69 @@
     &copy; 2025 | Built with passion❤️ and Python Flask
   </footer>
 
-  <!-- JS for toggling forms, file input -->
- <script>
-  function startRegister() {
-    document.getElementById('getStartedDiv').style.display = 'none';
-    showForm('register');
-    scrollToForm('registerForm');
-  }
+  <!-- JS for toggling forms, file input, password strength -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // show / hide forms and scrolling
+      window.startRegister = function() {
+        const gs = document.getElementById('getStartedDiv');
+        if (gs) gs.style.display = 'none';
+        showForm('register');
+        scrollToForm('registerForm');
+      };
 
-  function showForm(type) {
-    const registerForm = document.getElementById('registerForm');
-    const loginForm = document.getElementById('loginForm');
-    if(type === 'register') {
-      registerForm.classList.remove('hidden');
-      loginForm.classList.add('hidden');
-      scrollToForm('registerForm');
-    } else {
-      loginForm.classList.remove('hidden');
-      registerForm.classList.add('hidden');
-      scrollToForm('loginForm');
-    }
-  }
+      window.showForm = function(type) {
+        const registerForm = document.getElementById('registerForm');
+        const loginForm = document.getElementById('loginForm');
+        if (type === 'register') {
+          if (registerForm) registerForm.classList.remove('hidden');
+          if (loginForm) loginForm.classList.add('hidden');
+          scrollToForm('registerForm');
+        } else {
+          if (loginForm) loginForm.classList.remove('hidden');
+          if (registerForm) registerForm.classList.add('hidden');
+          scrollToForm('loginForm');
+        }
+      };
 
-  function scrollToForm(formId) {
-    const form = document.getElementById(formId);
-    if (form) {
-      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }
+      function scrollToForm(formId) {
+        const form = document.getElementById(formId);
+        if (form) {
+          form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
 
-  const resumeInput = document.getElementById('resume');
-  if(resumeInput) {
-    resumeInput.previousElementSibling.addEventListener('click', () => resumeInput.click());
-    resumeInput.addEventListener('change', function() {
-      const fileNameDisplay = document.getElementById('fileName');
-      fileNameDisplay.textContent = this.files.length ? `File uploaded: ${this.files[0].name}` : '';
+      // File input: wire label click to input (safer)
+      const resumeInput = document.getElementById('resume');
+      const resumeLabel = document.querySelector('label[for="resume"]');
+      if (resumeInput && resumeLabel) {
+        resumeLabel.addEventListener('click', () => resumeInput.click());
+        resumeInput.addEventListener('change', function() {
+          const fileNameDisplay = document.getElementById('fileName');
+          fileNameDisplay.textContent = this.files.length ? `File uploaded: ${this.files[0].name}` : '';
+        });
+      }
+
+      // Password strength (register)
+      const passwordInput = document.getElementById('registerPassword');
+      const strengthSpan = document.getElementById('passwordStrength');
+
+      if (passwordInput && strengthSpan) {
+        passwordInput.addEventListener('input', () => {
+          const val = passwordInput.value || '';
+          let strength = 0;
+          if (val.length >= 8) strength++;
+          if (/[A-Z]/.test(val)) strength++;
+          if (/[a-z]/.test(val)) strength++;
+          if (/[0-9]/.test(val)) strength++;
+          if (/[\W]/.test(val)) strength++;
+
+          strengthSpan.textContent = `Password strength: ${strength}/5`;
+          strengthSpan.className = `text-xs mt-1 ${strength < 5 ? 'text-red-500' : 'text-green-500'}`;
+        });
+      }
     });
-  }
-
-  const passwordInput = document.querySelector('input[name="password"]');
-const reminder = passwordInput.nextElementSibling;
-
-passwordInput.addEventListener('input', () => {
-  const val = passwordInput.value;
-  let strength = 0;
-  if (val.length >= 8) strength++;
-  if (/[A-Z]/.test(val)) strength++;
-  if (/[a-z]/.test(val)) strength++;
-  if (/[0-9]/.test(val)) strength++;
-  if (/[\W]/.test(val)) strength++;
-  
-  reminder.textContent = `Password strength: ${strength}/5`;
-  reminder.className = `text-xs mt-1 ${strength < 5 ? 'text-red-500' : 'text-green-500'}`;
-});
-</script>
+  </script>
 
 </body>
 </html>

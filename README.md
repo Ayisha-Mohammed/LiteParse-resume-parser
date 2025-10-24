@@ -4,7 +4,7 @@ A lightweight API that extracts structured information from **PDF/DOCX resumes**
 
 Built with **Python, Flask, SQLAlchemy, and JWT authentication**, designed for HR tools, ATS systems, or resume-based applications.  
 
-[🌐 Live Demo](https://liteparse-resume-parser.onrender.com) | [GitHub Repo](https://github.com/yourusername/LiteParse-resume-parser)
+[ Live Demo](https://liteparse-resume-parser.onrender.com) | [GitHub Repo](https://github.com/yourusername/LiteParse-resume-parser)
 
 ---
 

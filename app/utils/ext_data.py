@@ -1,18 +1,21 @@
 # Dear dev , NO enough resources, no big models, no perfect accuracy
-#Hope you can tho!!
+# Hope you can tho!!
 
 import spacy
 import re
 from spacy.matcher import PhraseMatcher
+
 # from transformers import pipeline ,transformers failed no resource !!
 
 nlp = spacy.load("en_core_web_sm")
 # summarizer = pipeline("summarization", model= "sshleifer/distilbart-cnn-12-6")
 
+
 def extract_email(text):
     pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
     match = re.search(pattern, text)
     return match.group() if match else None
+
 
 def extract_phone(text):
     pattern = r"(\+?\d{1,3}[\s-]?)?\(?\d{3,4}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
@@ -21,6 +24,7 @@ def extract_phone(text):
         return match.group()
     else:
         return None
+
 
 def extract_name(resume_text):
     lines = [line.strip() for line in resume_text.split("\n") if line.strip()]
@@ -94,6 +98,7 @@ def extract_education(text):
 
     # Join degrees with comma
     return {"degree": ", ".join(degrees_found)}
+
 
 def extract_education_section(text):
     lines = text.split("\n")

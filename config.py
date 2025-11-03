@@ -1,13 +1,15 @@
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 class Config:
     # Database
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL","sqlite:///test.db")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///test.db")
     print("Inside Config, DATABASE_URL =", SQLALCHEMY_DATABASE_URI)
     # "sqlite:///db.sqlite3"   fallback for local dev
-    
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
     # JWT

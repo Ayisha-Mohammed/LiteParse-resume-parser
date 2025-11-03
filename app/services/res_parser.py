@@ -11,6 +11,7 @@ from app.utils.ext_data import (
     extract_projects,
 )
 
+
 def parse_resume(resume_file: FileStorage):
     file_name = resume_file.filename.lower()
     if file_name.endswith(".pdf"):
@@ -37,12 +38,10 @@ def parse_resume(resume_file: FileStorage):
     # Always return consistent dict
     return {
         "Email": email,
-        "Phone": phone, 
+        "Phone": phone,
         "Name": name,
         "Skills": ", ".join(skills),
         "Education": education,
         "Latest degree": latest_deg,
         "Projects": projects,
     }
-
-

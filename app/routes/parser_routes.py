@@ -7,9 +7,11 @@ from flask import (
     redirect,
     url_for,
     session,
-    flash,json,send_file
+    flash,
+    json,
+    send_file,
 )
-from io import BytesIO 
+from io import BytesIO
 from app.services.res_parser import parse_resume
 from app.limiter import limiter
 from app import db, bcrypt
@@ -28,7 +30,9 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def home():
-    return render_template("home.html",user=session.get("user"),parsed_data=None)
+    return render_template("home.html", user=session.get("user"), parsed_data=None)
+
+
 @main_bp.route("/docs")
 def docs():
     return render_template("docs.html")
@@ -38,13 +42,13 @@ def auth_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         # auth header exists, use JWT
-        auth_header = request.headers.get("Authorization",None)
+        auth_header = request.headers.get("Authorization", None)
         if auth_header and auth_header.startswith("Bearer"):
             try:
                 verify_jwt_in_request()
                 identity = get_jwt_identity()
                 if not identity:
-                    return jsonify({"success": False, "error": "JWT required"}),401
+                    return jsonify({"success": False, "error": "JWT required"}), 401
             except Exception as e:
                 return jsonify({"success": False, "error": str(e)}), 401
         else:
@@ -53,7 +57,9 @@ def auth_required(f):
                 flash("Please log in first.")
                 return redirect(url_for("main.home"))
         return f(*args, **kwargs)
+
     return wrapper
+
 
 # register
 @parser_bp.route("/parse", methods=["POST"])
@@ -63,7 +69,9 @@ def parse():
     try:
         resume_file = request.files.get("resume")
         # check if API request json/browser
-        is_api_request = request.is_json or request.headers.get("Accept") == "application/json"
+        is_api_request = (
+            request.is_json or request.headers.get("Accept") == "application/json"
+        )
         if not resume_file:
             msg = "No resume uploaded."
             if is_api_request:
@@ -98,13 +106,11 @@ def parse():
 
         # response
         if is_api_request:
-            #return full result dict for API , always.
+            # return full result dict for API , always.
             return jsonify({"success": True, "data": result}), 200
-        
+
         return render_template(
-            "home.html",
-            parsed_data=result,
-            user=session.get("user")
+            "home.html", parsed_data=result, user=session.get("user")
         )
 
     except Exception as e:
@@ -113,6 +119,7 @@ def parse():
             return jsonify({"success": False, "error": str(e)}), 500
         flash("Something went wrong while parsing the resume.", "error")
         return redirect(url_for("main.home"))
+
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
@@ -151,13 +158,14 @@ def register():
     db.session.commit()
 
     # # Log in user (session)
-    # session['user'] = {"id": user.id, "username": user.username} ......... no need in reg rn !.
+    # session['user']={"id": user.id, "username": user.username} no need in reg rn !.
 
     if request.is_json:
         return jsonify({"message": "User created", "api_key": user.api_key}), 201
     else:
         flash("Registration successful!", "success")
         return redirect(url_for("main.home"))
+
 
 # Login
 @auth_bp.route("/login", methods=["POST"])
@@ -209,22 +217,24 @@ def login():
 
     #     access_token = create_access_token(identity=user.id)
     #     return jsonify({"access_token": access_token, "api_key": user.api_key})
-    # return jsonify({"message": "Invalid credentials"}), 401 
+    # return jsonify({"message": "Invalid credentials"}), 401
     # ..changed this to session based access(flasks-client side signed cookie session)
 
-# Logout     
+
+# Logout
 @auth_bp.route("/logout")
 def logout():
     session.pop("user", None)  # remove user from session
     flash("Logged out successfully", "success")
-    return redirect(url_for("main.home")) 
+    return redirect(url_for("main.home"))
 
-#Download output
+
+# Download output
 @parser_bp.route("/download_parsed")
 def download_parsed():
     data = session.get("parsed_data")
     if not data:
-        flash("No parsed data available for download","error")
+        flash("No parsed data available for download", "error")
         return redirect(url_for("main.home"))
 
     json_bytes = json.dumps(data, indent=4).encode("utf-8")
@@ -232,10 +242,11 @@ def download_parsed():
         BytesIO(json_bytes),
         mimetype="application/json",
         as_attachment=True,
-        download_name="parsed_resume.json"
+        download_name="parsed_resume.json",
     )
 
-#Ping Check
+
+# Ping Check
 @parser_bp.route("/ping", methods=["GET"])
 def ping():
     return jsonify({"success": True, "message": "API is alive"}), 200

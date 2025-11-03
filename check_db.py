@@ -8,4 +8,3 @@
 #     print("User count:", len(users))
 #     for u in users:
 #         print(u.id, u.username, u.email)
-

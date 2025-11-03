@@ -159,7 +159,6 @@ def register():
         flash("Registration successful!", "success")
         return redirect(url_for("main.home"))
 
-
 # Login
 @auth_bp.route("/login", methods=["POST"])
 def login():

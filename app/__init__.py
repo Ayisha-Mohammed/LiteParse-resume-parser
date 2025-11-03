@@ -15,19 +15,17 @@ import os
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
-# migrate = Migrate()  # create Migrate instance
+# migrate = Migrate()  # create Migrate instance 
 
 load_dotenv()
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(Config)   # Load config
     print("Using DATABASE_URL:", os.environ.get("DATABASE_URL"))
-    # Load config
-
-    # Set secret key for Flask session
+  
+    # for Flask session
     app.secret_key = os.environ.get("JWT_SECRET_KEY") or "dev-secret-key"
 
-    # CORS & logging
     CORS(app)
     logging.basicConfig(level=logging.INFO)
     app.logger.setLevel(logging.INFO)
@@ -39,14 +37,12 @@ def create_app():
     jwt.init_app(app)
     limiter.init_app(app)
 
-    # Create tables automatically
+    # auto table creation
     with app.app_context():
         from app.models import User, ResumeLog
-
         db.create_all()
 
     from app.routes.parser_routes import parser_bp, auth_bp, main_bp
-
     # Register blueprints
     app.register_blueprint(parser_bp)
     app.register_blueprint(auth_bp)

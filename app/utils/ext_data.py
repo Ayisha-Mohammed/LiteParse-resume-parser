@@ -1,18 +1,18 @@
+# Dear dev , NO enough resources, no big models, no perfect accuracy
+#Hope you can tho!!
+
 import spacy
 import re
 from spacy.matcher import PhraseMatcher
-
-# from transformers import pipeline
+# from transformers import pipeline ,transformers failed no resource !!
 
 nlp = spacy.load("en_core_web_sm")
 # summarizer = pipeline("summarization", model= "sshleifer/distilbart-cnn-12-6")
-
 
 def extract_email(text):
     pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
     match = re.search(pattern, text)
     return match.group() if match else None
-
 
 def extract_phone(text):
     pattern = r"(\+?\d{1,3}[\s-]?)?\(?\d{3,4}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
@@ -21,7 +21,6 @@ def extract_phone(text):
         return match.group()
     else:
         return None
-
 
 def extract_name(resume_text):
     lines = [line.strip() for line in resume_text.split("\n") if line.strip()]
@@ -71,7 +70,7 @@ def extract_education(text):
     ]
     end_pattern = re.compile(r"^(" + "|".join(end_keywords) + r")\b", re.IGNORECASE)
 
-    # Degree pattern (ignore year)
+    # Degree pattern (im ignoring year here)
     degree_keywords = r"(Bachelor|Master|B\.?Tech|M\.?Tech|MBA|MCA|BCA|B\.?Sc|M\.?Sc|Ph\.?D|Diploma|12th|10th)"
     degree_pattern = re.compile(rf"({degree_keywords}[^,\n]*)", re.IGNORECASE)
 
@@ -79,17 +78,14 @@ def extract_education(text):
 
     for line in lines:
         lower_line = line.lower()
-
         # Start from Education
         if not in_education:
             if start_pattern.search(line):
                 in_education = True
             continue
-
         # Stop at next section
         if end_pattern.search(lower_line):
             break
-
         # Extract degree only
         degree_match = degree_pattern.search(line)
         if degree_match:
@@ -98,23 +94,6 @@ def extract_education(text):
 
     # Join degrees with comma
     return {"degree": ", ".join(degrees_found)}
-
-
-# def extract_education_section(text):
-#     lines = text.split('\n')
-#     edu_lines = []
-#     capture = False
-#     for line in lines:
-#         lower = line.lower().strip()
-#         if 'education' in lower:
-#             capture = True
-#             continue
-# 'project', 'summary', 'skills', 'certifications']):
-#             break
-#         if capture:
-#             edu_lines.append(line)
-#     return '\n'.join(edu_lines)
-
 
 def extract_education_section(text):
     lines = text.split("\n")
@@ -165,7 +144,7 @@ def extract_latest_degree_and_year(text):
         "bachelor of computer science": 1,
     }
 
-    # Smart year range regex
+    # year range regex
     year_range_pattern = re.compile(
         r"(20\d{2}).*?(?:–|—|-|\sto\s).*?(20\d{2})", re.IGNORECASE
     )
